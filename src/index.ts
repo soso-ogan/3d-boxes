@@ -2,7 +2,9 @@ import {
     Scene,
     Mesh,
     MeshStandardMaterial,
-    BoxBufferGeometry,
+    Color,
+    BoxGeometry,
+    TorusGeometry,
 } from 'three';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
@@ -14,7 +16,7 @@ export function setupThreeJSScene() {
 
     let dimensions = { w: window.innerWidth, h: window.innerHeight };
 
-    const camera = setupCamera(dimensions);
+    const camera = setupCamera(dimensions); //can move
 
     const renderer = setupRenderer(camera, dimensions);
 
@@ -25,24 +27,18 @@ export function setupThreeJSScene() {
     setupLights(scene);
 
     setupHelpers(scene);
-
-    //shape(s)
-    const geometry = new BoxBufferGeometry(10, 10, 10);
-    const material = new MeshStandardMaterial({
-        color: 0xff00ff
-    });
-
-    let myShape: Mesh = new Mesh(geometry, material);
-    myShape.position.y = 20;
-    scene.add(myShape);
-
-
+    
+    
+    const myOrangeFloor = orangeFloor()
+    scene.add(myOrangeFloor)
+    const donut = createDonut()
+    scene.add(donut)
     animate();
 
 
     function animate() {
-        myShape.rotation.y += 0.01;
-        myShape.rotation.x += 0.02;
+        // myShape.rotation.y += 0.01;
+        // myShape.rotation.x += 0.02;
 
         renderer.render(scene, camera);
 
@@ -54,3 +50,40 @@ export function setupThreeJSScene() {
 }
 
 setupThreeJSScene();
+
+function orangeFloor(): Mesh{
+
+    //shape(s)
+    const geometry = new BoxGeometry(50, .5, 100);
+    const colour1 = new Color(0xBB6B00);
+    const material = new MeshStandardMaterial({
+        color: colour1
+        
+    });
+
+    let myShape: Mesh = new Mesh(geometry, material);
+    myShape.position.y = 0;
+    return myShape
+    // scene.add(myShape);
+}
+
+function createDonut(): Mesh{
+
+    //shape(s)
+    const geometry = new TorusGeometry(10, 3, 10, 100);
+    const colour1 = new Color('skyBlue');
+    const material = new MeshStandardMaterial({
+        color: colour1
+        
+    });
+
+    let myShape: Mesh = new Mesh(geometry, material);
+    myShape.position.y = 3;
+    myShape.position.z = 50 - 10 - 3;
+    myShape.rotation.x = Math.PI/2;
+    return myShape
+    // scene.add(myShape);
+    //documentation for donut
+    //https://threejs.org/docs/?q=geometr#api/en/geometries/TorusGeometry
+}
+
