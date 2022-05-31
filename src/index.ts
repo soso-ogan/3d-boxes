@@ -31,8 +31,11 @@ export function setupThreeJSScene() {
     
     const myOrangeFloor = orangeFloor()
     scene.add(myOrangeFloor)
-    const donut = createDonut()
-    scene.add(donut)
+
+    for (let i = 0; i < 100; i++){
+        const donut = createDonut()
+        scene.add(donut)
+    }
     animate();
 
 
@@ -54,7 +57,7 @@ setupThreeJSScene();
 function orangeFloor(): Mesh{
 
     //shape(s)
-    const geometry = new BoxGeometry(50, .5, 100);
+    const geometry = new BoxGeometry(100, .5, 100);
     const colour1 = new Color(0xBB6B00);
     const material = new MeshStandardMaterial({
         color: colour1
@@ -78,12 +81,15 @@ function createDonut(): Mesh{
     });
 
     let myShape: Mesh = new Mesh(geometry, material);
-    myShape.position.y = 3;
-    myShape.position.z = 50 - 10 - 3;
+    myShape.position.y = randomAroundZero(50);
+    myShape.position.z = randomAroundZero(50);
+    myShape.position.x = randomAroundZero(50);
     myShape.rotation.x = Math.PI/2;
     return myShape
     // scene.add(myShape);
     //documentation for donut
     //https://threejs.org/docs/?q=geometr#api/en/geometries/TorusGeometry
 }
-
+function randomAroundZero(half: number): number{
+    return Math.random()*half*2 - half
+};
