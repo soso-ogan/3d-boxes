@@ -7,6 +7,7 @@ import {
     TorusGeometry,
     ConeGeometry,
     Group,
+    CylinderGeometry,
 } from 'three';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
@@ -99,17 +100,36 @@ function randomAroundZero(half: number): number{
 };
 
 function createPineTree(): Group {
-    const geometry = new ConeGeometry(5, 13, 8);
-    const colour1 = new Color(0x244F26)
-    const material = new MeshStandardMaterial({
-        color: colour1
+    const topOfTreeGeometry = new ConeGeometry(8, 12, 8);
+    const middleOfTreeGeometry = new ConeGeometry(13, 17, 8);
+    const bottomOfTreeGeometry = new ConeGeometry(17, 22, 8);
+    const treeTruncGeometry = new CylinderGeometry(5,5,20,30);
+
+    const treeColour = new Color(0x244F26);
+    const treeTruncColour = new Color(0x522B29);
+    const treeMaterial = new MeshStandardMaterial({
+        color: treeColour,
+    })
+    const truncMaterial = new MeshStandardMaterial({
+        color: treeTruncColour
     })
     const fullPineTree = new Group()
-    let topOfPineTree = new Mesh(geometry, material)
-    topOfPineTree.position.y = 40
+    const topOfPineTree = new Mesh(topOfTreeGeometry, treeMaterial)
+    topOfPineTree.position.y = 20
     fullPineTree.add(topOfPineTree)
-    let middleOfPineTree = new Mesh(geometry, material)
+
+    const middleOfPineTree = new Mesh(middleOfTreeGeometry, treeMaterial)
+    middleOfPineTree.position.y = 10
     fullPineTree.add(middleOfPineTree)
+
+    const bottomOfPineTree = new Mesh(bottomOfTreeGeometry, treeMaterial)
+    bottomOfPineTree.position.y = 0
+    fullPineTree.add(bottomOfPineTree)
     
+    const truncOfTree = new Mesh(treeTruncGeometry, truncMaterial )
+    truncOfTree.position.y = -10
+    fullPineTree.add(truncOfTree)
+    
+    fullPineTree.position.y = 10
     return fullPineTree
 }
