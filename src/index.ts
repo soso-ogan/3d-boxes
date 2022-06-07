@@ -15,6 +15,11 @@ import { setupHelpers } from './setupHelpers';
 import { setupLights } from './setupLights';
 import { setupOrbitControls } from './setupOrbitControls';
 import { setupRenderer } from './setupRenderer';
+import Stats from 'three/examples/jsm/libs/stats.module'
+
+const stats = Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom);
 
 export function setupThreeJSScene() {
 
@@ -58,7 +63,7 @@ export function setupThreeJSScene() {
 
         // required if controls.enableDamping or controls.autoRotate are set to true
         controls.update();
-
+        stats.update()
         requestAnimationFrame(animate);
     }
 }
