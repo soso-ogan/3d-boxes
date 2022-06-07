@@ -5,6 +5,8 @@ import {
     Color,
     BoxGeometry,
     TorusGeometry,
+    ConeGeometry,
+    Group,
 } from 'three';
 import { setupCamera } from './setupCamera';
 import { setupHelpers } from './setupHelpers';
@@ -21,7 +23,7 @@ export function setupThreeJSScene() {
     const renderer = setupRenderer(camera, dimensions);
 
     const controls = setupOrbitControls(camera, renderer.domElement);
-
+    controls.autoRotate = false;
     let scene = new Scene();
 
     setupLights(scene);
@@ -30,12 +32,14 @@ export function setupThreeJSScene() {
     
     
     const myOrangeFloor = orangeFloor()
+    myOrangeFloor.position.y = -10
     scene.add(myOrangeFloor)
 
-    for (let i = 0; i < 100; i++){
-        const donut = createDonut()
-        scene.add(donut)
-    }
+    // for (let i = 0; i < 100; i++){
+    //     const donut = createDonut()
+    //     scene.add(donut)
+    // }
+    scene.add(createPineTree())
     animate();
 
 
@@ -93,3 +97,19 @@ function createDonut(): Mesh{
 function randomAroundZero(half: number): number{
     return Math.random()*half*2 - half
 };
+
+function createPineTree(): Group {
+    const geometry = new ConeGeometry(5, 13, 8);
+    const colour1 = new Color(0x244F26)
+    const material = new MeshStandardMaterial({
+        color: colour1
+    })
+    const fullPineTree = new Group()
+    let topOfPineTree = new Mesh(geometry, material)
+    topOfPineTree.position.y = 40
+    fullPineTree.add(topOfPineTree)
+    let middleOfPineTree = new Mesh(geometry, material)
+    fullPineTree.add(middleOfPineTree)
+    
+    return fullPineTree
+}
