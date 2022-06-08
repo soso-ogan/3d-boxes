@@ -1,6 +1,6 @@
 import {
-    BoxGeometry, BufferGeometry, Color, ConeGeometry, CylinderGeometry, Group, Material, Mesh,
-    MeshStandardMaterial, Scene
+    BoxGeometry, BufferGeometry, Color, ConeGeometry, CylinderGeometry, Euler, Group, InstancedMesh, Material, Matrix4, Mesh,
+    MeshStandardMaterial, Quaternion, Scene, Vector3
 } from 'three';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { randFloat, randFloatSpread, randInt } from 'three/src/math/MathUtils';
@@ -30,7 +30,7 @@ export function setupThreeJSScene() {
 
     createPineTrees(scene)
 
-    createFieldOfGrass(scene);
+    createInstancedFieldOfGrass(scene);
     animate();
 
     function animate() {
@@ -122,7 +122,7 @@ function createOnePineTree(topOfTreeGeometry: BufferGeometry, middleOfTreeGeomet
 }
 
 
-function createFieldOfGrass(scene: Scene): void {
+function createFieldOfGrassSlow(scene: Scene): void {
     const grassColours = [0x2F9C95, 0x40C9A2, 0xA3F7B5]
     const grassMaterials: Material[] = grassColours.map(c => new MeshStandardMaterial({
         color: c
@@ -147,6 +147,37 @@ function createFieldOfGrass(scene: Scene): void {
     }
 
 }
+function createInstancedFieldOfGrass(scene: Scene) {
+    const grassColours = [0x2F9C95, 0x40C9A2, 0xA3F7B5]
+
+    const grassBasicLength = 1.5;
+    const grassBasicWidth = 0.01;
+    const grassGeometry = new BoxGeometry(grassBasicWidth, grassBasicLength, grassBasicWidth)
+    const chosenMaterial = new MeshStandardMaterial({
+        color: grassColours[0]
+    })
+    const grassInstancedMesh = new InstancedMesh(grassGeometry, chosenMaterial, 1000000);
+
+    for (let i = 0; i < grassInstancedMesh.count; i++) {
+        grassInstancedMesh.setColorAt(i, new Color(pick(grassColours)));
+        const m = new Matrix4();
+        grassInstancedMesh.getMatrixAt(i, m);
+
+        const yScale = randFloat(0.3, 1);
+        const pos = new Vector3(randFloatSpread(100), grassBasicLength * yScale / 2, randFloatSpread(100));
+        const quaternion = new Quaternion();
+        const euler = new Euler(randFloatSpread(0.2), randFloatSpread(0.2), randFloatSpread(0.2), "XYZ");
+        quaternion.setFromEuler(euler);
+        const scale = new Vector3(1, yScale, 1);
+        m.compose(pos, quaternion, scale);
+
+        grassInstancedMesh.setMatrixAt(i, m);
+
+        grassInstancedMesh.instanceMatrix.needsUpdate = true;
+    }
+    scene.add(grassInstancedMesh)
+}
+
 
 function pick<ElementType>(arr: ElementType[]): ElementType {
     const index = randInt(0, arr.length - 1)
