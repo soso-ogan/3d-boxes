@@ -146,7 +146,7 @@ function createGrass(): Mesh{
     const grassColour2 = new Color(0x40C9A2)
     const grassColour3 = new Color(0xA3F7B5)
     const grassColours = [grassColour1, grassColour2,grassColour3]
-    const randomGrassColour =  grassColours[randInt(0,grassColours.length)]
+    const randomGrassColour = grassColours[randInt(0, grassColours.length - 1)]
     const grassMaterial = new MeshStandardMaterial({
         color: randomGrassColour
     })
