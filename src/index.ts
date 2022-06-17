@@ -117,15 +117,16 @@ function createPineTree(): Group {
     const topOfTreeGeometry = new ConeGeometry(8, 12, 8);
     const middleOfTreeGeometry = new ConeGeometry(13, 17, 8);
     const bottomOfTreeGeometry = new ConeGeometry(17, 22, 8);
-    const treeTruncGeometry = new CylinderGeometry(5, 5, 20, 30);
+    const treeTruncGeometry = new CylinderGeometry(5, 5, 20,6);
 
     const treeColour = new Color(0x244F26);
     const treeTruncColour = new Color(0x522B29);
     const treeMaterial = new MeshStandardMaterial({
-        color: treeColour,
+        color: treeColour
     })
     const truncMaterial = new MeshStandardMaterial({
-        color: treeTruncColour
+        color: treeTruncColour,
+        // flatShading: true
     })
 
     const fullPineTree = new Group()
@@ -172,9 +173,11 @@ function createGrass(): Mesh {
 function createStar(): Mesh {
     const starColour = new Color('white')
     const starMaterial = new MeshStandardMaterial({
-        color: starColour
+        color: starColour,
+        flatShading: true,
     })
-    const starGeometry = new SphereGeometry(randFloat(.5, .8))
+    const radius = randFloat(.5, .8)
+    const starGeometry = new SphereGeometry(radius, 3,2)
     const starMesh = new Mesh(starGeometry, starMaterial)
     const vector = new Vector3(0, 0, 0).randomDirection();
     const scale = randFloat(250, 300)
