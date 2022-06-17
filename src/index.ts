@@ -8,6 +8,8 @@ import {
     ConeGeometry,
     Group,
     CylinderGeometry,
+    SphereGeometry,
+    Vector3,
 } from 'three';
 import { randFloat, randInt } from 'three/src/math/MathUtils';
 import { setupCamera } from './setupCamera';
@@ -30,24 +32,33 @@ export function setupThreeJSScene() {
 
     setupLights(scene);
     setupHelpers(scene);
-    
+
+    //-------------------------------------------------------------------------
+    //ADDING MULTIPLE THINGS TO THE SCENE
+    //-------------------------------------------------------------------------
+    //added orange floor to scene
     const myOrangeFloor = orangeFloor()
     myOrangeFloor.position.y = -1
     scene.add(myOrangeFloor)
 
-    for (let i = 0; i < 150; i++){
+    //add pinetrees to scene
+    for (let i = 0; i < 250; i++) {
         const pineTree = createPineTree()
-        pineTree.scale.multiplyScalar(randFloat(1/5,1))
+        pineTree.scale.multiplyScalar(randFloat(1 / 5, 1))
         scene.add(pineTree)
     }
-
-    for (let i = 0; i < 10000; i++){
+    //add grass to scene
+    for (let i = 0; i < 100; i++) {
         const grass = createGrass()
-       
         // scene.add(pineTree)
         scene.add(grass)
     }
-    
+    //add stars to the scene
+    for (let i = 0; i < 1050; i++) {
+        const star = createStar()
+
+        scene.add(star)
+    }
     animate();
 
     function animate() {
@@ -64,13 +75,13 @@ export function setupThreeJSScene() {
 }
 setupThreeJSScene();
 
-function orangeFloor(): Mesh{
+function orangeFloor(): Mesh {
 
     //shape(s)
     const geometry = new BoxGeometry(100, .5, 100);
     const colour1 = new Color(0xBB6B00);
     const material = new MeshStandardMaterial({
-        color: colour1 
+        color: colour1
     });
     let myShape: Mesh = new Mesh(geometry, material);
     myShape.position.y = 0;
@@ -78,7 +89,7 @@ function orangeFloor(): Mesh{
     // scene.add(myShape);
 }
 
-function createDonut(): Mesh{
+function createDonut(): Mesh {
 
     //shape(s)
     const geometry = new TorusGeometry(10, 3, 10, 100);
@@ -91,14 +102,14 @@ function createDonut(): Mesh{
     myShape.position.y = randomAroundZero(50);
     myShape.position.z = randomAroundZero(50);
     myShape.position.x = randomAroundZero(50);
-    myShape.rotation.x = Math.PI/2;
+    myShape.rotation.x = Math.PI / 2;
     return myShape
     // scene.add(myShape);
     //documentation for donut
     //https://threejs.org/docs/?q=geometr#api/en/geometries/TorusGeometry
 }
-function randomAroundZero(half: number): number{
-    return Math.random()*half*2 - half
+function randomAroundZero(half: number): number {
+    return Math.random() * half * 2 - half
 };
 
 function createPineTree(): Group {
@@ -106,7 +117,7 @@ function createPineTree(): Group {
     const topOfTreeGeometry = new ConeGeometry(8, 12, 8);
     const middleOfTreeGeometry = new ConeGeometry(13, 17, 8);
     const bottomOfTreeGeometry = new ConeGeometry(17, 22, 8);
-    const treeTruncGeometry = new CylinderGeometry(5,5,20,30);
+    const treeTruncGeometry = new CylinderGeometry(5, 5, 20, 30);
 
     const treeColour = new Color(0x244F26);
     const treeTruncColour = new Color(0x522B29);
@@ -116,7 +127,7 @@ function createPineTree(): Group {
     const truncMaterial = new MeshStandardMaterial({
         color: treeTruncColour
     })
-    
+
     const fullPineTree = new Group()
     const topOfPineTree = new Mesh(topOfTreeGeometry, treeMaterial)
     topOfPineTree.position.y = 20
@@ -129,32 +140,47 @@ function createPineTree(): Group {
     const bottomOfPineTree = new Mesh(bottomOfTreeGeometry, treeMaterial)
     bottomOfPineTree.position.y = 0
     fullPineTree.add(bottomOfPineTree)
-    
-    const truncOfTree = new Mesh(treeTruncGeometry, truncMaterial )
+
+    const truncOfTree = new Mesh(treeTruncGeometry, truncMaterial)
     truncOfTree.position.y = -10
     fullPineTree.add(truncOfTree)
 
     fullPineTree.position.y = 5
-    fullPineTree.scale.set(.25,.25,.25)
+    fullPineTree.scale.set(.25, .25, .25)
     fullPineTree.position.x = randomAroundZero(50)
     fullPineTree.position.z = randomAroundZero(50)
     return fullPineTree
 }
 
-function createGrass(): Mesh{
+function createGrass(): Mesh {
     const grassColour1 = new Color(0x2F9C95)
     const grassColour2 = new Color(0x40C9A2)
     const grassColour3 = new Color(0xA3F7B5)
-    const grassColours = [grassColour1, grassColour2,grassColour3]
+    const grassColours = [grassColour1, grassColour2, grassColour3]
     const randomGrassColour = grassColours[randInt(0, grassColours.length - 1)]
     const grassMaterial = new MeshStandardMaterial({
         color: randomGrassColour
     })
-    const grassGeometry = new BoxGeometry(.15 , randomAroundZero(4) ,.15)
-    const grassMesh = new Mesh(grassGeometry,grassMaterial )
+    const grassGeometry = new BoxGeometry(.15, randomAroundZero(4), .15)
+    const grassMesh = new Mesh(grassGeometry, grassMaterial)
     grassMesh.position.y = 2
     grassMesh.position.x = randomAroundZero(50)
     grassMesh.position.z = randomAroundZero(50)
     return grassMesh
 }
 
+function createStar(): Mesh {
+    const starColour = new Color('white')
+    const starMaterial = new MeshStandardMaterial({
+        color: starColour
+    })
+    const starGeometry = new SphereGeometry(randFloat(.5, .8))
+    const starMesh = new Mesh(starGeometry, starMaterial)
+    const vector = new Vector3(0, 0, 0).randomDirection();
+    const scale = randFloat(250, 300)
+    const vecDir = vector.clone().multiplyScalar(scale)
+    starMesh.position.x = vecDir.x
+    starMesh.position.y = vecDir.y
+    starMesh.position.z = vecDir.z
+    return starMesh
+}
